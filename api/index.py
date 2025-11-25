@@ -9,6 +9,7 @@ import os
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
+# 모델 설정
 MODEL_NAME = "gemini-1.5-flash"
 
 app = FastAPI()
@@ -35,8 +36,7 @@ def get_ganji(year):
     y_idx = (year - 4) % 60
     return f"{chon[y_idx % 10]}{ji[y_idx % 12]}년 ({ji[y_idx % 12]}띠)"
 
-# ★★★ 여기 주소가 중요합니다! ★★★
-# vercel.json 없이 할 때는 함수 주소를 "/api/index"로 맞춰야 합니다.
+# ★★★ 주소 중요: vercel.json 없을 땐 파일 경로 그대로 씁니다 ★★★
 @app.post("/api/index")
 async def read_fortune(req: SajuRequest):
     final_year, final_month, final_day = req.year, req.month, req.day
