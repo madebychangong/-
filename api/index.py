@@ -5,11 +5,10 @@ from korean_lunar_calendar import KoreanLunarCalendar
 import google.generativeai as genai
 import os
 
-# API 키는 Vercel 환경변수에서 가져옵니다 (보안)
+# API 키 설정
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
-# 가성비 좋은 모델 선택 (목록에 안보여도 API 호출은 됩니다!)
 MODEL_NAME = "gemini-1.5-flash"
 
 app = FastAPI()
@@ -36,7 +35,9 @@ def get_ganji(year):
     y_idx = (year - 4) % 60
     return f"{chon[y_idx % 10]}{ji[y_idx % 12]}년 ({ji[y_idx % 12]}띠)"
 
-@app.post("/api/fortune")
+# ★★★ 여기 주소가 중요합니다! ★★★
+# vercel.json 없이 할 때는 함수 주소를 "/api/index"로 맞춰야 합니다.
+@app.post("/api/index")
 async def read_fortune(req: SajuRequest):
     final_year, final_month, final_day = req.year, req.month, req.day
     cal_msg = "양력"
@@ -75,4 +76,4 @@ async def read_fortune(req: SajuRequest):
         response = model.generate_content(prompt)
         return {"result": response.text}
     except Exception as e:
-        return {"result": f"신령님이 바쁘시네... 다시 시도해줘. ({str(e)})"}
+        return {"result": f"신령님이 바쁘시네... ({str(e)})"}
