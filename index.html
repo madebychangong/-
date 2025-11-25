@@ -135,7 +135,8 @@
         setTimeout(() => { document.getElementById('step3').classList.add('hidden'); document.getElementById('paymentModal').classList.remove('hidden'); }, 1500);
     }
     async function confirmPayment() {
-        document.getElementById('paymentModal').classList.add('hidden'); document.getElementById('step4').classList.remove('hidden');
+        document.getElementById('paymentModal').classList.add('hidden');
+        document.getElementById('step4').classList.remove('hidden');
         document.getElementById('resultContent').innerHTML = "신령님이 점괘를 뽑고 계십니다... (약 3초 소요)";
         
         const reqData = {
@@ -147,16 +148,19 @@
             calendar: document.getElementById('calendarType').value,
             persona: selectedPersona
         };
+
         try {
-            const response = await fetch("/api/index", {  // <--- 여기를 /api/index 로 변경!
-    method: "POST",
+            // ★ 여기가 중요합니다! 주소는 /api/index 로, 내용은 빠짐없이!
+            const response = await fetch("/api/index", { 
+                method: "POST", 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify(reqData) 
+            });
+            
+            const data = await response.json();
             document.getElementById('resultContent').innerHTML = data.result.replace(/\n/g, "<br>");
         } catch (error) {
+            console.error(error);
             document.getElementById('resultContent').innerHTML = "통신 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
         }
     }
-    function closePayment() { alert("신령님이 삐지셨습니다. (처음으로 돌아갑니다)"); location.reload(); }
-</script>
-</body>
-
-</html>
