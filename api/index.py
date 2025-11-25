@@ -9,7 +9,7 @@ import os
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
-# 모델 설정
+# 모델 설정 (가성비 1.5 Flash)
 MODEL_NAME = "gemini-1.5-flash"
 
 app = FastAPI()
@@ -37,6 +37,7 @@ def get_ganji(year):
     return f"{chon[y_idx % 10]}{ji[y_idx % 12]}년 ({ji[y_idx % 12]}띠)"
 
 # ★★★ 주소 확인: /api/fortune ★★★
+# (vercel.json에서 /api/로 시작하는 건 다 이리로 보내니까, 여기서도 주소를 맞춰줍니다)
 @app.post("/api/fortune")
 async def read_fortune(req: SajuRequest):
     final_year, final_month, final_day = req.year, req.month, req.day
