@@ -6,99 +6,406 @@
     <title>골라보는 MBTI 점집</title>
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
     <style>
-        :root { --bg-color: #111111; --card-bg: #1e1e1e; --primary: #8A2BE2; --accent: #00E0A8; --text: #ffffff; --text-gray: #aaaaaa; }
-        body { font-family: 'Pretendard Variable', sans-serif; background-color: var(--bg-color); color: var(--text); margin: 0; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-        .container { width: 100%; max-width: 420px; padding: 20px; display: flex; flex-direction: column; position: relative; box-sizing: border-box; }
-        header { text-align: center; margin-bottom: 30px; padding-top: 20px; }
-        .logo { font-size: 26px; font-weight: 800; background: linear-gradient(to right, #c471ed, #f64f59); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
-        .box { background: var(--card-bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: fadeIn 0.5s ease; }
+        /* --- 디자인 변수 (색상 테마) --- */
+        :root {
+            --bg-color: #111111;
+            --card-bg: #1e1e1e;
+            --primary: #8A2BE2; /* 메인 보라색 */
+            --accent: #00E0A8;  /* 포인트 민트색 */
+            --text: #ffffff;
+            --text-gray: #aaaaaa;
+        }
+
+        /* --- 기본 레이아웃 --- */
+        body {
+            font-family: 'Pretendard Variable', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px; /* 모바일 최적화 너비 */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        /* 헤더 */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(to right, #c471ed, #f64f59);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        /* 공통 박스 스타일 */
+        .box {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeIn 0.5s ease;
+        }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .char-card { background: #252525; border-radius: 18px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
-        .char-card:hover, .char-card.selected { border-color: var(--primary); background: #2e2535; transform: translateY(-3px); }
+
+        /* 1. 캐릭터 선택 그리드 */
+        .char-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .char-card {
+            background: #252525;
+            border-radius: 18px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid transparent;
+        }
+        .char-card:hover, .char-card.selected {
+            border-color: var(--primary);
+            background: #2e2535;
+            transform: translateY(-3px);
+        }
         .emoji { font-size: 42px; display: block; margin-bottom: 8px; }
         .char-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; display: block; color: #fff;}
         .char-desc { font-size: 12px; color: var(--text-gray); line-height: 1.4; }
+
+        /* 2. 입력 폼 */
         .input-group { margin-bottom: 20px; }
         label { display: block; font-size: 14px; color: var(--text-gray); margin-bottom: 8px; font-weight: 600; }
-        input, select { width: 100%; padding: 16px; background: #111; border: 1px solid #444; border-radius: 14px; color: white; font-size: 16px; box-sizing: border-box; outline: none; }
-        input:focus, select:focus { border-color: var(--primary); }
-        .btn-main { width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 18px; font-weight: 700; cursor: pointer; background: linear-gradient(135deg, #8A2BE2, #4B0082); color: white; transition: 0.2s; margin-top: 10px; }
+        input, select {
+            width: 100%;
+            padding: 16px;
+            background: #111;
+            border: 1px solid #444;
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.2s;
+        }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2); }
+
+        /* 메인 버튼 */
+        .btn-main {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: none;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, #8A2BE2, #4B0082);
+            color: white;
+            transition: 0.2s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+        }
         .btn-main:active { transform: scale(0.98); }
         .btn-sub { background: #333; box-shadow: none; margin-top: 10px; color: #ccc; }
+
+        /* 3. 로딩 화면 */
         .loading-screen { text-align: center; padding: 60px 0; }
-        .spinner { font-size: 60px; animation: spin 1.5s infinite linear; margin-bottom: 20px; display: inline-block; }
+        .spinner {
+            font-size: 60px;
+            animation: spin 1.5s infinite linear;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
         @keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
-        .result-header { display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #444; padding-bottom: 20px; margin-bottom: 20px; }
-        .chat-bubble { background: #3d3d3d; padding: 20px; border-radius: 0 20px 20px 20px; line-height: 1.7; font-size: 16px; color: #eee; min-height: 120px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-box { background: #1e1e1e; padding: 30px 25px; border-radius: 24px; width: 85%; max-width: 340px; text-align: center; border: 1px solid var(--accent); box-shadow: 0 0 40px rgba(0, 224, 168, 0.15); animation: popUp 0.3s; }
+
+        /* 4. 결과 화면 */
+        .result-card {
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 1px solid #444;
+        }
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .chat-bubble {
+            background: #3d3d3d;
+            padding: 20px;
+            border-radius: 0 20px 20px 20px;
+            line-height: 1.7;
+            font-size: 16px;
+            color: #eee;
+            min-height: 120px;
+        }
+        .highlight { color: var(--accent); font-weight: bold; }
+
+        /* --- 결제 팝업 (Modal) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 999;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-box {
+            background: #1e1e1e; padding: 30px 25px; border-radius: 24px;
+            width: 85%; max-width: 340px; text-align: center;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 40px rgba(0, 224, 168, 0.15);
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
         @keyframes popUp { from{transform: scale(0.8); opacity:0;} to{transform: scale(1); opacity:1;} }
-        .qr-wrapper { position: relative; margin: 20px auto; width: 200px; height: 200px; background: white; border-radius: 16px; padding: 10px; box-sizing: border-box; cursor: pointer; }
-        .qr-img { width: 100%; height: 100%; background-image: url('qr_code.png'); background-size: contain; background-repeat: no-repeat; background-position: center; }
+        
+        .qr-wrapper {
+            position: relative;
+            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 16px;
+            padding: 10px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .qr-wrapper:active { transform: scale(0.95); }
+        
+        .qr-img {
+            width: 100%;
+            height: 100%;
+            /* ★주의★ 이미지 파일명: qr_code.png (언더바) */
+            background-image: url('qr_code.png'); 
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <header><div class="logo">🔮 골라보는 영한 점집</div><p style="font-size:14px; color:#888; margin:0;">나와 딱 맞는 전담 무당을 선택하세요</p></header>
+    <header>
+        <div class="logo">🔮 골라보는 영한 점집</div>
+        <p style="font-size:14px; color:#888; margin:0;">나와 딱 맞는 전담 무당을 선택하세요</p>
+    </header>
+
     <div id="step1" class="box">
         <h3 style="margin-top:0; margin-bottom:20px;">누구에게 물어볼까요?</h3>
         <div class="char-grid">
-            <div class="char-card" onclick="selectChar('ESTJ')"><span class="emoji">🐯</span><span class="char-name">호랑이 신령</span><span class="char-desc">#팩트폭격 #혼남</span></div>
-            <div class="char-card" onclick="selectChar('ENFP')"><span class="emoji">🧚‍♀️</span><span class="char-name">꽃선녀님</span><span class="char-desc">#폭풍공감 #우쭈쭈</span></div>
-            <div class="char-card" onclick="selectChar('INFJ')"><span class="emoji">🔮</span><span class="char-name">미러 도사</span><span class="char-desc">#심리통찰 #진지</span></div>
-            <div class="char-card" onclick="selectChar('ENTP')"><span class="emoji">😎</span><span class="char-name">괴짜 도깨비</span><span class="char-desc">#사이다 #해결책</span></div>
+            <div class="char-card" onclick="selectChar('ESTJ')">
+                <span class="emoji">🐯</span>
+                <span class="char-name">호랑이 신령</span>
+                <span class="char-desc">#팩트폭격 #혼남</span>
+            </div>
+            <div class="char-card" onclick="selectChar('ENFP')">
+                <span class="emoji">🧚‍♀️</span>
+                <span class="char-name">꽃선녀님</span>
+                <span class="char-desc">#폭풍공감 #우쭈쭈</span>
+            </div>
+            <div class="char-card" onclick="selectChar('INFJ')">
+                <span class="emoji">🔮</span>
+                <span class="char-name">미러 도사</span>
+                <span class="char-desc">#심리통찰 #진지</span>
+            </div>
+            <div class="char-card" onclick="selectChar('ENTP')">
+                <span class="emoji">😎</span>
+                <span class="char-name">괴짜 도깨비</span>
+                <span class="char-desc">#사이다 #해결책</span>
+            </div>
         </div>
     </div>
+
     <div id="step2" class="box hidden">
         <h3 style="margin-top:0; margin-bottom:20px;"><span id="selectedCharName"></span>에게 정보 제공</h3>
-        <div class="input-group"><label>태어난 연도</label><input type="number" placeholder="예: 1995" id="birthYear"></div>
-        <div class="input-group"><label>생일</label><div style="display:flex; gap:10px;"><select id="birthMonth" style="flex:1"></select><select id="birthDay" style="flex:1"></select></div></div>
-        <div class="input-group"><label>양력/음력</label><select id="calendarType"><option value="solar">양력</option><option value="lunar">음력</option></select></div>
-        <div class="input-group"><label>성별</label><select id="gender"><option value="male">남성</option><option value="female">여성</option></select></div>
-        <div class="input-group"><label>태어난 시간</label><select id="birthTime"><option value="unknown">모름</option><option value="00">자시</option><option value="02">축시</option><option value="04">인시</option><option value="06">묘시</option><option value="08">진시</option><option value="10">사시</option><option value="12">오시</option><option value="14">미시</option><option value="16">신시</option><option value="18">유시</option><option value="20">술시</option><option value="22">해시</option></select></div>
+        
+        <div class="input-group">
+            <label>태어난 연도 (4자리)</label>
+            <input type="number" placeholder="예: 1995" id="birthYear">
+        </div>
+        
+        <div class="input-group">
+            <label>태어난 날짜</label>
+            <div style="display:flex; gap:10px;">
+                <select id="birthMonth" style="flex:1"></select>
+                <select id="birthDay" style="flex:1"></select>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>양력/음력</label>
+            <select id="calendarType">
+                <option value="solar">양력</option>
+                <option value="lunar">음력</option>
+                <option value="lunar_leap">음력(윤달)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>성별</label>
+            <select id="gender">
+                <option value="male">남성</option>
+                <option value="female">여성</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>태어난 시간</label>
+            <select id="birthTime">
+                <option value="unknown">모름</option>
+                <option value="00">자시 (23:30~01:29)</option>
+                <option value="02">축시 (01:30~03:29)</option>
+                <option value="04">인시 (03:30~05:29)</option>
+                <option value="06">묘시 (05:30~07:29)</option>
+                <option value="08">진시 (07:30~09:29)</option>
+                <option value="10">사시 (09:30~11:29)</option>
+                <option value="12">오시 (11:30~13:29)</option>
+                <option value="14">미시 (13:30~15:29)</option>
+                <option value="16">신시 (15:30~17:29)</option>
+                <option value="18">유시 (17:30~19:29)</option>
+                <option value="20">술시 (19:30~21:29)</option>
+                <option value="22">해시 (21:30~23:29)</option>
+            </select>
+        </div>
+
         <button class="btn-main" onclick="startLoading()">운세 보기</button>
     </div>
-    <div id="step3" class="loading-screen hidden"><div class="spinner">💫</div><h3 id="loadingText">운세를 살피는 중...</h3><p style="color:#888;">잠시만 기다려주세요.</p></div>
+
+    <div id="step3" class="loading-screen hidden">
+        <div class="spinner">💫</div>
+        <h3 id="loadingText">운세를 살피는 중...</h3>
+        <p style="color:#888; font-size:14px;">잠시만 기다려주세요.</p>
+    </div>
+
     <div id="step4" class="box result-card hidden">
-        <div class="result-header"><span class="emoji" style="font-size:50px; margin:0;" id="resultIcon">🐯</span><div><span style="font-size:12px; color:var(--accent); font-weight:bold;">당신의 수호신</span><h2 style="margin:0" id="resultTitle">호랑이 신령</h2></div></div>
-        <div class="chat-bubble"><p id="resultContent">...</p></div>
-        <div style="margin-top:30px;"><button class="btn-main btn-sub" onclick="location.reload()">다시 하기</button></div>
+        <div class="result-header">
+            <span class="emoji" style="font-size:50px; margin:0;" id="resultIcon">🐯</span>
+            <div>
+                <span style="font-size:12px; color:var(--accent); font-weight:bold;">당신의 수호신</span>
+                <h2 style="margin:0" id="resultTitle">호랑이 신령</h2>
+            </div>
+        </div>
+        
+        <div class="chat-bubble">
+            <p id="resultContent">
+                </p>
+        </div>
+
+        <div style="margin-top:30px;">
+            <button class="btn-main btn-sub" onclick="location.reload()">다른 캐릭터로 다시 보기</button>
+        </div>
     </div>
 </div>
+
 <div id="paymentModal" class="modal-overlay hidden">
     <div class="modal-box">
-        <span style="font-size:40px;">🙏</span><h2 style="margin: 10px 0; color:var(--accent);">복채는 500원!</h2>
-        <p style="color:#ccc; font-size:14px; line-height:1.6;">점괘가 나왔습니다.<br>서버비 후원 후 확인해주세요.</p>
+        <span style="font-size:40px; display:block; margin-bottom:10px;">🙏</span>
+        <h2 style="margin: 0; color:var(--accent);">복채는 500원!</h2>
+        <p style="color:#ccc; font-size:14px; line-height:1.6; margin:15px 0;">
+            점괘가 나왔습니다.<br>
+            서버비 후원(500원) 후 확인해주세요.<br>
+            <span style="font-size:12px; color:#888;">(모바일은 QR을 누르면 연결됩니다)</span>
+        </p>
+        
         <a href="https://qr.kakaopay.com/Ej7tVCQ8E" target="_blank">
-            <div class="qr-wrapper"><div class="qr-img"></div><div style="position:absolute; bottom:-30px; width:100%; text-align:center; color:var(--accent); font-size:13px; font-weight:bold;">👆 터치해서 송금하기</div></div>
+            <div class="qr-wrapper">
+                <div class="qr-img"></div>
+                <div style="position:absolute; bottom:-30px; width:100%; text-align:center; color:var(--accent); font-size:13px; font-weight:bold; animation: bounce 1s infinite;">
+                    👆 터치해서 송금하기
+                </div>
+            </div>
         </a>
-        <div style="margin-top: 45px;"><button class="btn-main" onclick="confirmPayment()">입금했어요! (결과보기)</button><button class="btn-main btn-sub" onclick="closePayment()" style="font-size:14px; padding:12px;">다음에 할게요</button></div>
+        
+        <style>@keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-5px);} }</style>
+
+        <div style="margin-top: 45px;">
+            <button class="btn-main" onclick="confirmPayment()">입금했어요! (결과보기)</button>
+            <button class="btn-main btn-sub" onclick="closePayment()" style="font-size:14px; padding:12px;">다음에 할게요</button>
+        </div>
     </div>
 </div>
+
 <script>
-    const monthSelect = document.getElementById('birthMonth'); const daySelect = document.getElementById('birthDay');
-    for(let i=1; i<=12; i++) { let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i+'월'; monthSelect.appendChild(opt); }
-    for(let i=1; i<=31; i++) { let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i+'일'; daySelect.appendChild(opt); }
+    // 1. 날짜 옵션 채우기 (자동화)
+    const monthSelect = document.getElementById('birthMonth');
+    const daySelect = document.getElementById('birthDay');
+    
+    for(let i=1; i<=12; i++) { 
+        let opt = document.createElement('option'); 
+        opt.value = i; 
+        opt.innerHTML = i + '월'; 
+        monthSelect.appendChild(opt); 
+    }
+    for(let i=1; i<=31; i++) { 
+        let opt = document.createElement('option'); 
+        opt.value = i; 
+        opt.innerHTML = i + '일'; 
+        daySelect.appendChild(opt); 
+    }
+
+    // 2. 로직 시작
     let selectedPersona = '';
+
     function selectChar(persona) {
         selectedPersona = persona;
-        let name='', icon='';
-        if(persona==='ESTJ') { name='호랑이 신령'; icon='🐯'; } else if(persona==='ENFP') { name='꽃선녀님'; icon='🧚‍♀️'; }
-        else if(persona==='INFJ') { name='미러 도사'; icon='🔮'; } else if(persona==='ENTP') { name='괴짜 도깨비'; icon='😎'; }
-        document.getElementById('selectedCharName').innerText=name; document.getElementById('resultTitle').innerText=name; document.getElementById('resultIcon').innerText=icon;
-        document.getElementById('step1').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden');
+        let name = '', icon = '';
+        if(persona === 'ESTJ') { name = '호랑이 신령'; icon = '🐯'; }
+        if(persona === 'ENFP') { name = '꽃선녀님'; icon = '🧚‍♀️'; }
+        if(persona === 'INFJ') { name = '미러 도사'; icon = '🔮'; }
+        if(persona === 'ENTP') { name = '괴짜 도깨비'; icon = '😎'; }
+
+        document.getElementById('selectedCharName').innerText = name;
+        document.getElementById('resultTitle').innerText = name;
+        document.getElementById('resultIcon').innerText = icon;
+
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
     }
+
     function startLoading() {
+        // 간단한 유효성 검사
         const year = document.getElementById('birthYear').value;
-        if(!year || year<1900 || year>2025) { alert("연도를 확인해주세요."); return; }
-        document.getElementById('step2').classList.add('hidden'); document.getElementById('step3').classList.remove('hidden');
-        setTimeout(() => { document.getElementById('step3').classList.add('hidden'); document.getElementById('paymentModal').classList.remove('hidden'); }, 1500);
+        if(!year || year < 1900 || year > 2025) {
+            alert("태어난 연도를 올바르게 입력해주세요.");
+            return;
+        }
+
+        document.getElementById('step2').classList.add('hidden');
+        document.getElementById('step3').classList.remove('hidden');
+
+        // 1.5초 뒤 결제 팝업 띄우기
+        setTimeout(() => {
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }, 1500);
     }
+
     async function confirmPayment() {
-        document.getElementById('paymentModal').classList.add('hidden'); document.getElementById('step4').classList.remove('hidden');
+        // 결제 확인 버튼 누르면 결과 화면으로 이동
+        document.getElementById('paymentModal').classList.add('hidden');
+        document.getElementById('step4').classList.remove('hidden');
         document.getElementById('resultContent').innerHTML = "신령님이 점괘를 뽑고 계십니다... (약 3초 소요)";
+        
+        // 서버로 보낼 데이터 정리
         const reqData = {
             year: parseInt(document.getElementById('birthYear').value),
             month: parseInt(document.getElementById('birthMonth').value),
@@ -108,16 +415,31 @@
             calendar: document.getElementById('calendarType').value,
             persona: selectedPersona
         };
+
         try {
-            // ★★★ 여기 주소 확인: /api/fortune ★★★
-            const response = await fetch("/api/fortune", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reqData) });
+            // ★★★ 여기가 중요합니다! 주소: /api/fortune ★★★
+            const response = await fetch("/api/fortune", { 
+                method: "POST", 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify(reqData) 
+            });
+            
             const data = await response.json();
+            
+            // 결과 텍스트를 화면에 표시 (줄바꿈 처리)
             document.getElementById('resultContent').innerHTML = data.result.replace(/\n/g, "<br>");
+
         } catch (error) {
+            console.error(error);
             document.getElementById('resultContent').innerHTML = "통신 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
         }
     }
-    function closePayment() { alert("신령님이 삐지셨습니다. (처음으로 돌아갑니다)"); location.reload(); }
+
+    function closePayment() {
+        alert("신령님이 삐지셨습니다. (처음으로 돌아갑니다)");
+        location.reload();
+    }
 </script>
+
 </body>
 </html>
