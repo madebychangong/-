@@ -1,19 +1,19 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from korean_lunar_calendar import KoreanLunarCalendar
 import google.generativeai as genai
 import os
 
-# 1. 설정
+# API 키 설정
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
+
+# 모델 설정
 MODEL_NAME = "gemini-1.5-flash"
 
 app = FastAPI()
 
-# CORS 설정
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,16 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ==========================================
-# ★ 핵심 수정: 메인 화면 보여주기 ★
-# ==========================================
-@app.get("/")
-async def read_root():
-    # index.html 파일을 읽어서 그대로 보여줍니다.
-    with open("index.html", "r", encoding="utf-8") as f:
-        return HTMLResponse(content=f.read())
-
-# 2. 데이터 모델
 class SajuRequest(BaseModel):
     year: int
     month: int
@@ -40,14 +30,13 @@ class SajuRequest(BaseModel):
     calendar: str
     persona: str
 
-# 3. 만세력 로직
 def get_ganji(year):
     chon = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"]
     ji = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"]
     y_idx = (year - 4) % 60
     return f"{chon[y_idx % 10]}{ji[y_idx % 12]}년 ({ji[y_idx % 12]}띠)"
 
-# 4. 운세 보기 API
+# ★★★ 주소 확인: /api/fortune ★★★
 @app.post("/api/fortune")
 async def read_fortune(req: SajuRequest):
     final_year, final_month, final_day = req.year, req.month, req.day
