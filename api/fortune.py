@@ -8,8 +8,6 @@ import os
 # API 키 설정
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
-
-# 모델 설정 (가성비 1.5 Flash)
 MODEL_NAME = "gemini-1.5-flash"
 
 app = FastAPI()
@@ -36,9 +34,8 @@ def get_ganji(year):
     y_idx = (year - 4) % 60
     return f"{chon[y_idx % 10]}{ji[y_idx % 12]}년 ({ji[y_idx % 12]}띠)"
 
-# ★★★ 주소 확인: /api/fortune ★★★
-# (vercel.json에서 /api/로 시작하는 건 다 이리로 보내니까, 여기서도 주소를 맞춰줍니다)
-@app.post("/api/fortune")
+# ★ 중요: 주소를 그냥 "/"로 잡습니다. (파일 이름이 fortune이라서 자동으로 /api/fortune이 됩니다)
+@app.post("/")
 async def read_fortune(req: SajuRequest):
     final_year, final_month, final_day = req.year, req.month, req.day
     cal_msg = "양력"
@@ -58,18 +55,18 @@ async def read_fortune(req: SajuRequest):
 
     system_role = "너는 용한 점쟁이야."
     if req.persona == "ESTJ":
-        system_role = "너는 '호랑이 신령'이야. MBTI는 ESTJ. 공감은 절대 안 해. 팩트로 뼈만 때려. 반말을 쓰고, 아주 엄격하고 무섭게 혼내듯이 말해."
+        system_role = "너는 '호랑이 신령'이야. MBTI는 ESTJ. 공감 절대 없음. 팩트폭격. 반말 사용."
     elif req.persona == "ENFP":
-        system_role = "너는 '꽃선녀님'이야. MBTI는 ENFP. 세상 긍정적이고 리액션이 커. '언니가~' 호칭 쓰고 이모티콘 팍팍 써."
+        system_role = "너는 '꽃선녀님'이야. MBTI는 ENFP. 세상 긍정적, 리액션 부자. '언니가~' 호칭 사용."
     elif req.persona == "INFJ":
-        system_role = "너는 '미러 도사'야. MBTI는 INFJ. 깊은 통찰력으로 마음을 꿰뚫어 봐. 차분하고 신비로운 말투를 써."
+        system_role = "너는 '미러 도사'야. MBTI는 INFJ. 통찰력 있고 차분함. 철학적인 조언."
     elif req.persona == "ENTP":
-        system_role = "너는 '괴짜 도깨비'야. MBTI는 ENTP. 장난기가 많고 예측불가능해. 시니컬한 해결책을 던져줘."
+        system_role = "너는 '괴짜 도깨비'야. MBTI는 ENTP. 장난기 많고 시니컬한 해결책 제시."
 
     prompt = f"""
     [역할] {system_role}
     [사용자] {final_year}년 {final_month}월 {final_day}일생 ({cal_msg}), {req.gender}, {ganji}, 태어난시간: {req.time}
-    [지시] 위 사용자의 올해 운세(재물/연애/직장)를 너의 캐릭터 말투로 찰지게 풀어서 말해줘. 300자 이내, 핵심만 3문단으로.
+    [지시] 위 사용자의 올해 운세(재물/연애/직장)를 캐릭터 말투로 찰지게 300자 이내 3문단으로 요약해줘.
     """
 
     try:
