@@ -148,8 +148,8 @@
             persona: selectedPersona
         };
         try {
-            const response = await fetch("/api/fortune", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reqData) });
-            const data = await response.json();
+            const response = await fetch("/api/index", {  // <--- 여기를 /api/index 로 변경!
+    method: "POST",
             document.getElementById('resultContent').innerHTML = data.result.replace(/\n/g, "<br>");
         } catch (error) {
             document.getElementById('resultContent').innerHTML = "통신 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
@@ -158,4 +158,5 @@
     function closePayment() { alert("신령님이 삐지셨습니다. (처음으로 돌아갑니다)"); location.reload(); }
 </script>
 </body>
+
 </html>
